@@ -10,26 +10,26 @@ const tslint = require('gulp-tslint')
 const browserSync = require('browser-sync').create()
 
 const pack = require('./package.json')
-const utils = require('./config/utils.js')
+const packageRollup = require('./utils/package-rollup')
 
 gulp.task('compress', ['js-lint', 'commonjs', 'dev', 'production', 'all', 'all.min'])
 
 gulp.task('commonjs', () => {
-  return utils.packageRollup({
+  return packageRollup({
     dest: 'dist/' + pack.name + '.common.js',
     format: 'cjs'
   })
 })
 
 gulp.task('dev', () => {
-  return utils.packageRollup({
+  return packageRollup({
     dest: 'dist/' + pack.name + '.js',
     format: 'umd'
   })
 })
 
 gulp.task('production', () => {
-  return utils.packageRollup({
+  return packageRollup({
     dest: 'dist/' + pack.name + '.min.js',
     format: 'umd',
     minify: true
@@ -37,7 +37,7 @@ gulp.task('production', () => {
 })
 
 gulp.task('all', ['sass'], () => {
-  return utils.packageRollup({
+  return packageRollup({
     entry: 'src/sweetalert2.all.js',
     dest: 'dist/' + pack.name + '.all.js',
     format: 'umd'
@@ -45,7 +45,7 @@ gulp.task('all', ['sass'], () => {
 })
 
 gulp.task('all.min', ['sass'], () => {
-  return utils.packageRollup({
+  return packageRollup({
     entry: 'src/sweetalert2.all.js',
     dest: 'dist/' + pack.name + '.all.min.js',
     format: 'umd',
