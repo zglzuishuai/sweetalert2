@@ -325,26 +325,3 @@ export const measureScrollbar = () => {
   document.body.removeChild(scrollDiv)
   return scrollbarWidth
 }
-
-/**
- * Inject a string of CSS into the page header
- *
- * @param {String} css
- */
-export const injectCSS = (css = '') => {
-  // Prevent run in Node env
-  if (isNodeEnv()) {
-    return false
-  }
-
-  let head = document.head || document.getElementsByTagName('head')[0]
-  let style = document.createElement('style')
-  style.type = 'text/css'
-  head.appendChild(style)
-
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css
-  } else {
-    style.appendChild(document.createTextNode(css))
-  }
-}
