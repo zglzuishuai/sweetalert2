@@ -72,7 +72,8 @@
     "check:bundlesize": "bundlesize -f dist/sweetalert2.all.min.js -s 15kB",
     "check:lint": "gulp lint",
     "check:test": "testem ci",
-    "check:dts": "tsc sweetalert2.d.ts"
+    "check:dts": "tsc sweetalert2.d.ts",
+    "fix:lint": "standard --fix"
   },
   "bugs": "https://github.com/sweetalert2/sweetalert2/issues",
   "license": "MIT"
