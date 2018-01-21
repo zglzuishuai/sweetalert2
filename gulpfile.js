@@ -5,7 +5,6 @@ const rename = require('gulp-rename')
 const autoprefix = require('gulp-autoprefixer')
 const standard = require('gulp-standard')
 const sassLint = require('gulp-sass-lint')
-const ts = require('gulp-typescript')
 const tslint = require('gulp-tslint')
 
 const pack = require('./package.json')
@@ -60,11 +59,6 @@ gulp.task('sass', () => {
     .pipe(gulp.dest('dist'))
 })
 
-gulp.task('ts', () => {
-  return gulp.src(tsFiles)
-    .pipe(ts())
-})
-
 gulp.task('lint', ['lint:js', 'lint:sass', 'lint:ts'])
 
 gulp.task('lint:js', () => {
@@ -88,7 +82,7 @@ gulp.task('lint:ts', () => {
     .pipe(tslint.report())
 })
 
-gulp.task('default', ['sass', 'ts', 'compress'])
+gulp.task('default', ['sass', 'compress'])
 
 gulp.task('watch', () => {
   gulp.watch(srcJsFiles, ['compress'])
