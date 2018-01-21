@@ -7,7 +7,6 @@ const standard = require('gulp-standard')
 const sassLint = require('gulp-sass-lint')
 const ts = require('gulp-typescript')
 const tslint = require('gulp-tslint')
-const browserSync = require('browser-sync').create()
 
 const pack = require('./package.json')
 const packageRollup = require('./utils/package-rollup')
@@ -88,24 +87,6 @@ gulp.task('ts-lint', () => {
 gulp.task('default', ['sass', 'ts', 'compress'])
 
 gulp.task('watch', () => {
-  browserSync.init({
-    port: 8080,
-    notify: false,
-    reloadOnRestart: true,
-    https: false,
-    server: ['./'],
-    startPath: 'test/sandbox.html'
-  })
-
-  gulp.watch([
-    'test/sandbox.html',
-    'dist/sweetalert2.all.min.js'
-  ]).on('change', browserSync.reload)
-
-  gulp.watch([
-    'src/**/*.js',
-    'test/*.js'
-  ], ['compress'])
-
-  gulp.watch(['src/*.scss'], ['sass', 'compress'])
+  gulp.watch(['src/**/*.js'], ['compress'])
+  gulp.watch(['src/**/*.scss'], ['sass'])
 })
