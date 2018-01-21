@@ -7,17 +7,19 @@ addons:
   firefox: latest
   google-chrome: latest
 
-before_script:
-  - gulp
-  - bundlesize -f dist/sweetalert2.all.min.js -s 15kB
-
 script:
-  # unit tests against dist/sweetalert2.js
-  - xvfb-run testem ci --reporter dot
+  # build the dist
+  - npm run build
 
-  # unit tests against dist/sweetalert2.all.min.js
+  # run all checks
+  - npm run check:bundlesize
+  - npm run check:lint
+  - xvfb-run npm run check:test
+  - npm run check:dts
+
+  # run unit tests again, against `.all.min.js` this time
   - sed -i 's/sweetalert2.js/sweetalert2.all.min.js/g' testem.json
-  - xvfb-run testem ci --reporter dot
+  - xvfb-run npm run check:test
 
 deploy:
   api_key:

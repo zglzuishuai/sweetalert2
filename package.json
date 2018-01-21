@@ -66,9 +66,13 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "testem ci",
-    "lint-dts": "tslint sweetalert2.d.ts --format verbose",
-    "check-dts": "tsc sweetalert2.d.ts && npm run lint-dts"
+    "test": "npm run build && npm run check",
+    "build": "gulp",
+    "check": "npm run check:bundlesize && npm run check:lint && npm run check:test && npm run check:dts",
+    "check:bundlesize": "bundlesize -f dist/sweetalert2.all.min.js -s 15kB",
+    "check:lint": "gulp lint",
+    "check:test": "testem ci",
+    "check:dts": "tsc sweetalert2.d.ts"
   },
   "bugs": "https://github.com/sweetalert2/sweetalert2/issues",
   "license": "MIT"
