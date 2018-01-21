@@ -11,7 +11,12 @@ const tslint = require('gulp-tslint')
 const pack = require('./package.json')
 const packageRollup = require('./utils/package-rollup')
 
-gulp.task('compress', ['js-lint', 'dev', 'production', 'all', 'all.min'])
+const allJsFiles = ['**/*.js', '!dist/**', '!node_modules/**']
+const srcJsFiles = ['src/**/*.js']
+const sassFiles = ['src/**/*.scss']
+const tsFiles = ['sweetalert2.d.ts']
+
+gulp.task('compress', ['dev', 'production', 'all', 'all.min'])
 
 gulp.task('dev', () => {
   return packageRollup({
@@ -45,41 +50,40 @@ gulp.task('all.min', ['sass'], () => {
   })
 })
 
-gulp.task('sass', ['sass-lint'], (cb) => {
-  gulp.src('src/sweetalert2.scss')
+gulp.task('sass', () => {
+  return gulp.src('src/sweetalert2.scss')
     .pipe(sass())
     .pipe(autoprefix())
     .pipe(gulp.dest('dist'))
     .pipe(cleanCSS())
     .pipe(rename({extname: '.min.css'}))
     .pipe(gulp.dest('dist'))
-    .on('end', cb)
 })
 
-gulp.task('ts', ['ts-lint'], () => {
-  return gulp.src('sweetalert2.d.ts')
+gulp.task('ts', () => {
+  return gulp.src(tsFiles)
     .pipe(ts())
 })
 
-gulp.task('lint', ['js-lint', 'sass-lint', 'ts-lint'])
+gulp.task('lint', ['lint:js', 'lint:sass', 'lint:ts'])
 
-gulp.task('js-lint', () => {
-  return gulp.src(['src/**/*.js', 'test/*.js'])
+gulp.task('lint:js', () => {
+  return gulp.src(allJsFiles)
     .pipe(standard())
     .pipe(standard.reporter('default', {
       breakOnError: true
     }))
 })
 
-gulp.task('sass-lint', () => {
-  return gulp.src(['src/**/*.scss'])
+gulp.task('lint:sass', () => {
+  return gulp.src(sassFiles)
     .pipe(sassLint())
     .pipe(sassLint.format())
     .pipe(sassLint.failOnError())
 })
 
-gulp.task('ts-lint', () => {
-  return gulp.src('sweetalert2.d.ts')
+gulp.task('lint:ts', () => {
+  return gulp.src(tsFiles)
     .pipe(tslint({ formatter: 'verbose' }))
     .pipe(tslint.report())
 })
@@ -87,6 +91,9 @@ gulp.task('ts-lint', () => {
 gulp.task('default', ['sass', 'ts', 'compress'])
 
 gulp.task('watch', () => {
-  gulp.watch(['src/**/*.js'], ['compress'])
-  gulp.watch(['src/**/*.scss'], ['sass'])
+  gulp.watch(srcJsFiles, ['compress'])
+  gulp.watch(sassFiles, ['sass'])
+  gulp.watch(allJsFiles, ['lint:js'])
+  gulp.watch(sassFiles, ['lint:sass'])
+  gulp.watch(tsFiles, ['lint:ts'])
 })
