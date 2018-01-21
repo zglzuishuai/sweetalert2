@@ -14,11 +14,14 @@ const srcJsFiles = ['src/**/*.js']
 const srcSassFiles = ['src/**/*.scss']
 const tsFiles = ['sweetalert2.d.ts']
 
+const skipMinification = process.argv.includes('--skip-minification')
+const skipStandalone = process.argv.includes('--skip-standalone')
+
 gulp.task('default', ['build'])
 
 // ---
 
-gulp.task('build', ['build:js', 'build:css', 'build:standalone'])
+gulp.task('build', ['build:js', 'build:css', ...(skipStandalone ? [] : ['build:standalone'])])
 
 gulp.task('build:js', () => {
   return gulp.src(['package.json', ...srcJsFiles])
@@ -38,13 +41,13 @@ gulp.task('build:js', () => {
       }
     }))
     .pipe(gulp.dest('dist'))
-    .pipe($.uglify({
+    .pipe($.if(!skipMinification, $.uglify({
       output: {
         preamble: banner
       }
-    }))
-    .pipe($.rename('sweetalert2.min.js'))
-    .pipe(gulp.dest('dist'))
+    })))
+    .pipe($.if(!skipMinification, $.rename('sweetalert2.min.js')))
+    .pipe($.if(!skipMinification, gulp.dest('dist')))
 })
 
 gulp.task('build:css', () => {
@@ -52,9 +55,9 @@ gulp.task('build:css', () => {
     .pipe($.sass())
     .pipe($.autoprefixer())
     .pipe(gulp.dest('dist'))
-    .pipe($.cleanCss())
-    .pipe($.rename('sweetalert2.min.css'))
-    .pipe(gulp.dest('dist'))
+    .pipe($.if(!skipMinification, $.cleanCss()))
+    .pipe($.if(!skipMinification, $.rename('sweetalert2.min.css')))
+    .pipe($.if(!skipMinification, gulp.dest('dist')))
 })
 
 gulp.task('build:standalone', ['build:js', 'build:css'], () => {
@@ -64,13 +67,17 @@ gulp.task('build:standalone', ['build:js', 'build:css'], () => {
   const prettyStandalone = $.merge(prettyJs, prettyCssAsJs)
     .pipe($.concat('sweetalert2.all.js'))
     .pipe(gulp.dest('dist'))
-  const uglyJs = gulp.src('dist/sweetalert2.min.js')
-  const uglyCssAsJs = gulp.src('dist/sweetalert2.min.css')
-    .pipe($.css2js())
-  const uglyStandalone = $.merge(uglyJs, uglyCssAsJs)
-    .pipe($.concat('sweetalert2.all.min.js'))
-    .pipe(gulp.dest('dist'))
-  return $.merge(prettyStandalone, uglyStandalone)
+  if (skipMinification) {
+    return prettyStandalone
+  } else {
+    const uglyJs = gulp.src('dist/sweetalert2.min.js')
+    const uglyCssAsJs = gulp.src('dist/sweetalert2.min.css')
+      .pipe($.css2js())
+    const uglyStandalone = $.merge(uglyJs, uglyCssAsJs)
+      .pipe($.concat('sweetalert2.all.min.js'))
+      .pipe(gulp.dest('dist'))
+    return $.merge(prettyStandalone, uglyStandalone)
+  }
 })
 
 // ---
