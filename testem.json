@@ -12,5 +12,6 @@
       "Chrome",
       "Firefox"
     ],
-    "parallel": 100
+    "parallel": 100,
+    "disable_watching": true
 }
