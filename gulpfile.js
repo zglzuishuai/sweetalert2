@@ -1,6 +1,5 @@
 const gulp = require('gulp')
 const $ = require('gulp-load-plugins')()
-const mergeStream = require('merge-stream')
 const babel = require('rollup-plugin-babel')
 const json = require('rollup-plugin-json')
 const packageJson = require('./package.json')
@@ -19,8 +18,10 @@ gulp.task('default', ['build'])
 
 // ---
 
-gulp.task('build', () => {
-  const prettyJs = gulp.src(['package.json', ...srcJsFiles])
+gulp.task('build', ['build:js', 'build:css', 'build:standalone'])
+
+gulp.task('build:js', () => {
+  return gulp.src(['package.json', ...srcJsFiles])
     .pipe($.rollup({
       plugins: [
         json(),
@@ -37,7 +38,6 @@ gulp.task('build', () => {
       }
     }))
     .pipe(gulp.dest('dist'))
-  const uglyJs = prettyJs
     .pipe($.uglify({
       output: {
         preamble: banner
@@ -45,32 +45,32 @@ gulp.task('build', () => {
     }))
     .pipe($.rename('sweetalert2.min.js'))
     .pipe(gulp.dest('dist'))
+})
 
-  const prettyCss = gulp.src('src/sweetalert2.scss')
+gulp.task('build:css', () => {
+  return gulp.src('src/sweetalert2.scss')
     .pipe($.sass())
     .pipe($.autoprefixer())
     .pipe(gulp.dest('dist'))
-  const uglyCss = prettyCss
     .pipe($.cleanCss())
     .pipe($.rename('sweetalert2.min.css'))
     .pipe(gulp.dest('dist'))
+})
 
-  const prettyCssAsJs = prettyCss
+gulp.task('build:standalone', ['build:js', 'build:css'], () => {
+  const prettyJs = gulp.src('dist/sweetalert2.js')
+  const prettyCssAsJs = gulp.src('dist/sweetalert2.css')
     .pipe($.css2js())
-    // .pipe($.rename('sweetalert2.css.js'))
-    // .pipe(gulp.dest('dist'))
-  const prettyStandalone = mergeStream(prettyJs, prettyCssAsJs)
+  const prettyStandalone = $.merge(prettyJs, prettyCssAsJs)
     .pipe($.concat('sweetalert2.all.js'))
     .pipe(gulp.dest('dist'))
-  const uglyCssAsJs = uglyCss
+  const uglyJs = gulp.src('dist/sweetalert2.min.js')
+  const uglyCssAsJs = gulp.src('dist/sweetalert2.min.css')
     .pipe($.css2js())
-    // .pipe($.rename('sweetalert2.min.css.js'))
-    // .pipe(gulp.dest('dist'))
-  const uglyStandalone = mergeStream(uglyJs, uglyCssAsJs)
+  const uglyStandalone = $.merge(uglyJs, uglyCssAsJs)
     .pipe($.concat('sweetalert2.all.min.js'))
     .pipe(gulp.dest('dist'))
-
-  return mergeStream(prettyStandalone, uglyStandalone)
+  return $.merge(prettyStandalone, uglyStandalone)
 })
 
 // ---
