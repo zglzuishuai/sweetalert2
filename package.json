@@ -14,6 +14,7 @@
     "babel-plugin-transform-object-assign": "latest",
     "babel-preset-es2015": "latest",
     "bundlesize": "^0.15.3",
+    "execa": "~0.9.0",
     "gulp": "latest",
     "gulp-autoprefixer": "^4.1.0",
     "gulp-clean-css": "^3.9.0",
@@ -73,7 +74,8 @@
     "check:lint": "gulp lint",
     "check:test": "testem ci",
     "check:dts": "tsc sweetalert2.d.ts",
-    "fix:lint": "standard --fix"
+    "fix:lint": "standard --fix",
+    "dev": "gulp dev --skip-minification --skip-standalone"
   },
   "bugs": "https://github.com/sweetalert2/sweetalert2/issues",
   "license": "MIT"

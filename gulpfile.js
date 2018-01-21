@@ -2,6 +2,7 @@ const gulp = require('gulp')
 const $ = require('gulp-load-plugins')()
 const babel = require('rollup-plugin-babel')
 const json = require('rollup-plugin-json')
+const execa = require('execa')
 const packageJson = require('./package.json')
 
 const banner = `/*!
@@ -107,9 +108,17 @@ gulp.task('lint:ts', () => {
 
 // ---
 
-gulp.task('watch', () => {
-  gulp.watch([...srcJsFiles, ...srcSassFiles], 'build')
+/**
+ * Does *not* rebuild standalone builds
+ */
+gulp.task('dev', ['build', 'lint'], async () => {
+  gulp.watch(srcJsFiles, ['build:js'])
+  gulp.watch(srcSassFiles, ['build:css'])
+
   gulp.watch(allJsFiles, ['lint:js'])
   gulp.watch(srcSassFiles, ['lint:sass'])
   gulp.watch(tsFiles, ['lint:ts'])
+
+  console.log('Open testem: http://localhost:7357/')
+  await execa('testem')
 })
