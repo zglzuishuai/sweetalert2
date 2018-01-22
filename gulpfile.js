@@ -2,7 +2,7 @@ const gulp = require('gulp')
 const $ = require('gulp-load-plugins')()
 const babel = require('rollup-plugin-babel')
 const json = require('rollup-plugin-json')
-const pEvent = require('p-event')
+const merge = require('merge2')
 const execa = require('execa')
 const packageJson = require('./package.json')
 
@@ -62,19 +62,19 @@ gulp.task('build:standalone', () => {
   const prettyJs = gulp.src('dist/sweetalert2.js')
   const prettyCssAsJs = gulp.src('dist/sweetalert2.css')
     .pipe($.css2js())
-  const prettyStandalone = $.merge(prettyJs, prettyCssAsJs)
+  const prettyStandalone = merge(prettyJs, prettyCssAsJs)
     .pipe($.concat('sweetalert2.all.js'))
     .pipe(gulp.dest('dist'))
   if (skipMinification) {
-    return pEvent(prettyStandalone, 'end')
+    return prettyStandalone
   } else {
     const uglyJs = gulp.src('dist/sweetalert2.min.js')
     const uglyCssAsJs = gulp.src('dist/sweetalert2.min.css')
       .pipe($.css2js())
-    const uglyStandalone = $.merge(uglyJs, uglyCssAsJs)
+    const uglyStandalone = merge(uglyJs, uglyCssAsJs)
       .pipe($.concat('sweetalert2.all.min.js'))
       .pipe(gulp.dest('dist'))
-    return Promise.all([pEvent(prettyStandalone, 'end'), pEvent(uglyStandalone, 'end')])
+    return merge([prettyStandalone, uglyStandalone])
   }
 })
 
