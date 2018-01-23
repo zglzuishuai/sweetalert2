@@ -75,7 +75,7 @@
     "check:test": "testem ci",
     "check:dts": "tsc sweetalert2.d.ts",
     "fix:lint": "standard --fix",
-    "dev": "gulp dev --skip-minification --skip-standalone --continue-on-lint-error"
+    "dev": "gulp dev --skip-minification --continue-on-lint-error"
   },
   "bugs": "https://github.com/sweetalert2/sweetalert2/issues",
   "license": "MIT"

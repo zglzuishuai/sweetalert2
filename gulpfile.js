@@ -17,7 +17,6 @@ const srcSassFiles = ['src/**/*.scss']
 const tsFiles = ['sweetalert2.d.ts']
 
 const skipMinification = process.argv.includes('--skip-minification')
-const skipStandalone = process.argv.includes('--skip-standalone')
 const continueOnLintError = process.argv.includes('--continue-on-lint-error')
 
 // ---
@@ -84,7 +83,7 @@ gulp.task('build:standalone', () => {
 
 gulp.task('build', gulp.series(
   gulp.parallel('build:js', 'build:css'),
-  ...(skipStandalone ? [] : ['build:standalone'])
+  'build:standalone'
 ))
 
 gulp.task('default', gulp.parallel('build'))
@@ -122,7 +121,7 @@ gulp.task('lint', gulp.parallel('lint:js', 'lint:sass', 'lint:ts'))
  * Does *not* rebuild standalone builds
  */
 gulp.task('dev', gulp.series(
-  gulp.parallel('build', 'lint'),
+  gulp.parallel('build:js', 'build:css', 'lint'),
   async function watch () {
     gulp.watch(srcJsFiles, gulp.parallel('build:js'))
     gulp.watch(srcSassFiles, gulp.parallel('build:css'))
