@@ -60,6 +60,8 @@ gulp.task('build:css', () => {
 
 /**
  * Warning: This task depends on dist/sweetalert2.js & dist/sweetalert2.css
+ *
+ * Note: --watch flag does not apply to this task
  */
 gulp.task('build:standalone', () => {
   const prettyJs = gulp.src('dist/sweetalert2.js')
