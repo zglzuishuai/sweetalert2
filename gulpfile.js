@@ -18,6 +18,7 @@ const tsFiles = ['sweetalert2.d.ts']
 
 const skipMinification = process.argv.includes('--skip-minification')
 const skipStandalone = process.argv.includes('--skip-standalone')
+const continueOnLintError = process.argv.includes('--continue-on-lint-error')
 
 // ---
 
@@ -91,7 +92,7 @@ gulp.task('lint:js', () => {
   return gulp.src(allJsFiles)
     .pipe($.standard())
     .pipe($.standard.reporter('default', {
-      breakOnError: true
+      breakOnError: !continueOnLintError
     }))
 })
 
@@ -99,13 +100,15 @@ gulp.task('lint:sass', () => {
   return gulp.src(srcSassFiles)
     .pipe($.sassLint())
     .pipe($.sassLint.format())
-    .pipe($.sassLint.failOnError())
+    .pipe($.if(!continueOnLintError, $.sassLint.failOnError()))
 })
 
 gulp.task('lint:ts', () => {
   return gulp.src(tsFiles)
     .pipe($.tslint({ formatter: 'verbose' }))
-    .pipe($.tslint.report())
+    .pipe($.tslint.report({
+      emitError: !continueOnLintError
+    }))
 })
 
 gulp.task('lint', gulp.parallel('lint:js', 'lint:sass', 'lint:ts'))
