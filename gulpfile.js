@@ -59,6 +59,9 @@ gulp.task('build:css', () => {
     .pipe($.if(!skipMinification, gulp.dest('dist')))
 })
 
+/**
+ * Warning: This task depends on dist/sweetalert2.js & dist/sweetalert2.css
+ */
 gulp.task('build:standalone', () => {
   const prettyJs = gulp.src('dist/sweetalert2.js')
   const prettyCssAsJs = gulp.src('dist/sweetalert2.css')
