@@ -96,7 +96,9 @@ gulp.task('ts-lint', () => {
     .pipe(tslint.report())
 })
 
-gulp.task('default', ['sass', 'ts', 'compress', 'css.min'])
+gulp.task('build', ['sass', 'ts', 'compress', 'css.min'])
+
+gulp.task('default', ['build'])
 
 gulp.task('watch', ['default'], () => {
   run('npm run assume-dist-unchanged').exec()
