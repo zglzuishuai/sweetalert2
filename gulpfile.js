@@ -85,9 +85,11 @@ gulp.task('ts-lint', () => {
     .pipe(tslint.report())
 })
 
-gulp.task('default', ['sass', 'ts', 'compress'])
+gulp.task('build', ['sass', 'ts', 'compress'])
 
-gulp.task('watch', () => {
+gulp.task('default', ['build'])
+
+gulp.task('watch', ['default'], () => {
   browserSync.init({
     port: 8080,
     notify: false,
