@@ -119,4 +119,6 @@ gulp.task('watch', ['default'], () => {
   gulp.watch(['src/**/*.js'], ['dev'])
 
   gulp.watch(['src/*.scss'], ['sass'])
+
+  gulp.watch(['sweetalert2.d.ts'], ['ts'])
 })
